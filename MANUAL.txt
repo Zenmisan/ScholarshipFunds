@@ -1,0 +1,115 @@
+DECENTRALIZED SCHOLARSHIP FUND - OPERATIONAL MANUAL
+
+================================================================================
+1. PROJECT OVERVIEW
+================================================================================
+This application is a Decentralized Scholarship Fund. It allows an administrator
+to deposit funds into a secure smart contract and assign them to specific students.
+Students can then log in with their crypto wallet and claim their scholarship
+automatically, removing the need for intermediaries.
+
+================================================================================
+2. SYSTEM REQUIREMENTS
+================================================================================
+- Node.js (v18+)
+- Bun (Package Manager)
+- MetaMask (Browser Wallet Extension)
+
+================================================================================
+3. INSTALLATION & SETUP GUIDE
+================================================================================
+
+[STEP 1] INSTALL DEPENDENCIES
+Open your terminal and run the following commands:
+
+    cd scholarship-dapp/backend
+    bun install
+
+    cd ../frontend
+    bun install
+
+[STEP 2] START LOCAL BLOCKCHAIN
+This starts a simulated Ethereum network on your machine.
+    
+    cd scholarship-dapp/backend
+    bun run node
+
+    >> IMPORTANT: Keep this terminal window OPEN. It will show you a list of
+    >> Private Keys. You will need these to log in.
+
+[STEP 3] DEPLOY SMART CONTRACT
+Open a NEW terminal window (do not close the previous one).
+
+    cd scholarship-dapp/backend
+    bun run hardhat run scripts/deploy.ts --network localhost
+
+    >> Copy the address shown in the output (e.g., 0x5FbDB...).
+
+[STEP 4] CONNECT FRONTEND TO BACKEND
+Open the file: scholarship-dapp/frontend/src/constants.js
+Replace the 'CONTRACT_ADDRESS' value with the address you just copied.
+
+    export const CONTRACT_ADDRESS = "0xYourCopiedAddress...";
+
+[STEP 5] LAUNCH APPLICATION
+    
+    cd scholarship-dapp/frontend
+    bun run dev
+
+    >> Open http://localhost:5173 in your browser.
+
+================================================================================
+4. METAMASK CONFIGURATION (REQUIRED)
+================================================================================
+You must connect MetaMask to your local blockchain "Localhost".
+
+1. Open MetaMask -> Settings -> Networks -> Add Network -> Manual.
+2. Enter these details:
+   - Network Name: Localhost 8545
+   - RPC URL: http://127.0.0.1:8545
+   - Chain ID: 31337
+   - Symbol: ETH
+3. Save.
+
+4. Import Test Accounts:
+   - Go to your 'bun run node' terminal.
+   - Copy the Private Key for Account #0 (This is the ADMIN).
+   - In MetaMask: Click Circle Icon -> Import Account -> Paste Key.
+   - Repeat for Account #1 (This will be a STUDENT).
+
+================================================================================
+5. USER MANUAL: ADMIN (OWNER)
+================================================================================
+WHO: The person controlling Account #0.
+
+1. Login: Select Account #0 in MetaMask and click "Connect Wallet".
+2. Interface: You will see the "Platform Overview" dashboard.
+3. Key Functions:
+   - [Deposit Funds]: Add ETH to the scholarship pool.
+   - [Grant Scholarship]: Register a student by entering their Name, Wallet Address,
+     and Amount (ETH).
+   - [Pause Claims]: Temporarily stop all students from withdrawing.
+   - [Withdraw All]: Remove all funds from the contract back to your wallet.
+
+================================================================================
+6. USER MANUAL: STUDENT
+================================================================================
+WHO: A student (e.g., Account #1) who has been registered by the Admin.
+
+1. Login: Select Account #1 in MetaMask and click "Connect Wallet".
+2. Interface: You will see the "Student Portal".
+3. Key Functions:
+   - [View Status]: See your allocated amount and claim status.
+   - [Claim Scholarship]: Click the button to withdraw your funds to your wallet.
+   
+   * Note: If you are not registered, you will see an "Access Denied" message.
+
+================================================================================
+7. TROUBLESHOOTING
+================================================================================
+- Transaction Stuck/Failed?
+  Reset your MetaMask account: Settings -> Advanced -> Clear Activity Tab Data.
+  (This is common when restarting the local blockchain).
+
+- App shows "0 ETH" balance?
+  Ensure you are connected to "Localhost 8545" in MetaMask, not Mainnet.

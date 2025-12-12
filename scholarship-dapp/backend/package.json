@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "hardhat test",
+    "compile": "cross-env TS_NODE_PROJECT=\"tsconfig.hardhat.json\" hardhat compile",
+    "node": "cross-env TS_NODE_PROJECT=\"tsconfig.hardhat.json\" hardhat node" ,
+    "deploy": "hardhat run scripts/deploy.ts"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.0.2",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "cross-env": "^10.1.0"
+  }
+}

@@ -1,0 +1,28 @@
+You are an expert React/Tailwind CSS developer tasked with redesigning a Decentralized Scholarship Application (dApp) front end written with Vite. The goal is to make the application's landing page (unconnected state) look **EXACTLY** like the provided visual reference image, while ensuring the connected state (AdminDashboard/StudentPortal) maintains a clean, professional, and dark-mode compatible aesthetic, as previously discussed.
+
+The visual reference image defines the following **Design Language for the Landing Page (Unconnected State)**:
+1.  **Background:** Deep space/sci-fi dark background with subtle particle/texture effects and faint blue/cyan light sources on the left/right. The primary container should be black (`#000000`).
+2.  **Typography & Hierarchy:**
+    * Top Title ("SCHOLARSHIP DAPP"): Small, all-caps, wide tracking, white/gray color, with thin horizontal lines separating it from the content.
+    * Subtitle ("-DECENTRALIZED EDUCATION FUNDING"): Very small, highly tracked, low opacity white.
+    * **Hero Headline ("Funding the Next Generation"):** Massive font size, tight tracking. The words "Next Generation" must use a horizontal gradient blend of Blue, Cyan/Green, and Purple/Pink, similar to a neon glow.
+3.  **Call to Action (CTA):** A simple, high-contrast, box-style button with a thin white border that says "GET STARTED". It should not be a gradient and should have wide letter spacing.
+4.  **Logo/Icon Elements:** The React and Vite (Vue-like) icons overlay the text "Funding the Next Generation." (Note: Since we cannot embed images, use placeholder SVG/CSS for the icons or just focus on the typography/color matching).
+
+**Technical Requirements & Constraints:**
+* **Frameworks:** React, Vite, Tailwind CSS.
+* **Target File:** `src/App.jsx`.
+* **Component Structure:** Preserve the existing conditional rendering logic (`{!account ? (Hero) : (Portal/Dashboard)}`).
+* **Styling:** Only use Tailwind CSS utility classes and inline styles where necessary for complex backgrounds/gradients. Do not use external CSS files for this task.
+
+**Specific Implementation Task (Modify `src/App.jsx`):**
+
+1.  **Redesign the main `div` container:** Change the background from the current conic gradient to a solid dark color (`bg-black`) and use CSS for subtle glow effects to match the dark aesthetic.
+2.  **Redesign the Navbar (`<nav>`):** Remove the centered gradient logo. Implement the minimalist text title ("SCHOLARSHIP DAPP") and the thin horizontal rule shown in the image. Keep the right-aligned `Connect Wallet` button.
+3.  **Redesign the Hero Section (where `!account` is true):**
+    * Implement the huge, tightly tracked, gradient-colored headline for "Next Generation" (Blue, Green, Purple gradient).
+    * Implement the minimalist, wide-tracked text for the subtitle ("-DECENTRALIZED EDUCATION FUNDING").
+    * Implement the `GET STARTED` CTA button with the simple white border and wide tracking.
+    * Remove all original decorative elements (e.g., the rotating icon, floater divs).
+
+**Output Request:** Provide the **complete, final, integrated code for `src/App.jsx`** that strictly adheres to the visual design requirements of the image while preserving the core functional logic (`useScholarship`, `ToastContainer`, `AdminDashboard`/`StudentPortal` rendering).
