@@ -40,7 +40,7 @@ Open a **new** terminal window and deploy the contract to your local network.
 
 ```bash
 # Inside scholarship-dapp/backend
-bun run hardhat run scripts/deploy.ts --network localhost
+bun run scripts/deploy.ts --network localhost
 ```
 **Output:** `ScholarshipFund deployed to: 0x...`
 
