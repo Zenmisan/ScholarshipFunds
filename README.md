@@ -115,3 +115,29 @@ To interact with the local blockchain, you must configure MetaMask.
 ## 7. Troubleshooting
 - **"Nonce too high" Error:** In MetaMask, go to Settings -> Advanced -> Clear Activity Tab Data. This resets the transaction history for the local network.
 - **Connection Failed:** Ensure `bun run node` is still running in the background.
+
+---
+
+## 8. Security & Optimization Updates
+The smart contract and frontend have been updated to address several security audit findings and improve performance:
+
+### Smart Contract Logic
+- **Efficient Student Removal (O(1)):** 
+  Previously, removing a student required iterating through the entire list of students ($O(N)$ complexity), which could lead to Denial of Service (DoS) due to gas limits if the list became large. 
+  *Fix:* We now track the `listIndex` of each student. When removing a student, we swap the student to be removed with the last student in the array and then pop the last element. This ensures the removal operation always costs the same amount of gas ($O(1)$), regardless of how many students are registered.
+
+- **Gas Optimization (Storage):**
+  Storing string data (like student names) on-chain is expensive. 
+  *Fix:* The `name` field has been removed from the `Student` struct. Instead, student names are now emitted in the `StudentAdded` event. This significantly reduces gas costs for storage operations. Frontend applications can index these events to display names if needed (currently, the frontend uses a generic "Scholarship Recipient" title).
+
+- **Paginated Data Retrieval:**
+  The `getAllStudents` function attempted to return the entire array of students at once. For large lists, this could exceed the block gas limit or cause RPC timeouts.
+  *Fix:* We implemented a `getStudents(uint256 offset, uint256 limit)` function. This allows the frontend to fetch student data in smaller, manageable chunks (pages), ensuring scalability.
+
+- **Public Deposits:**
+  The `depositFunds` function was previously restricted to the owner only.
+  *Fix:* The `onlyOwner` restriction has been removed, allowing anyone (alumni, organizations, public donors) to contribute to the scholarship fund, while withdrawal and administration remain restricted to the owner.
+
+### Frontend Updates
+- **Admin Dashboard:** Now fetches student data using the new pagination method (`getStudents`) to ensure stability even with many registered students.
+- **Student Portal:** Updated to remove dependencies on on-chain name storage, focusing on wallet address and scholarship amount for verification.
