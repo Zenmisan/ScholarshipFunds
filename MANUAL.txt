@@ -41,7 +41,7 @@ This starts a simulated Ethereum network on your machine.
 Open a NEW terminal window (do not close the previous one).
 
     cd scholarship-dapp/backend
-    bun run hardhat run scripts/deploy.ts --network localhost
+    bun run scripts/deploy.ts --network localhost
 
     >> Copy the address shown in the output (e.g., 0x5FbDB...).
 

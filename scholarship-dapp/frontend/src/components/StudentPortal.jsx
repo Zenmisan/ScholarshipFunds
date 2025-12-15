@@ -91,7 +91,7 @@ const StudentPortal = ({ contract, account }) => {
                 🎓
             </div>
             
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-1">{studentInfo.name}</h2>
+            <h2 className="text-3xl font-extrabold text-gray-900 mb-1">Scholarship Recipient</h2>
             <p className="text-gray-500 font-mono text-sm mb-10 tracking-wider">
               <span className="text-gray-400">Address:</span> {account.slice(0, 6)}...{account.slice(-4)}
             </p>

@@ -8,11 +8,11 @@ import "@openzeppelin/contracts/utils/Pausable.sol";
 contract ScholarshipFund is Ownable, ReentrancyGuard, Pausable {
     
     struct Student {
-        string name;
         address walletAddress;
         uint256 amount;
         bool hasClaimed;
         bool isRegistered;
+        uint256 listIndex;
     }
 
     // Mappings
@@ -39,15 +39,15 @@ contract ScholarshipFund is Ownable, ReentrancyGuard, Pausable {
         require(!students[_studentAddress].isRegistered, "Student already registered");
         require(_amount > 0, "Amount must be greater than 0");
 
+        studentList.push(_studentAddress);
         students[_studentAddress] = Student({
-            name: _name,
             walletAddress: _studentAddress,
             amount: _amount,
             hasClaimed: false,
-            isRegistered: true
+            isRegistered: true,
+            listIndex: studentList.length - 1
         });
 
-        studentList.push(_studentAddress);
         emit StudentAdded(_studentAddress, _name, _amount);
     }
 
@@ -81,17 +81,17 @@ contract ScholarshipFund is Ownable, ReentrancyGuard, Pausable {
         require(students[_studentAddress].isRegistered, "Student not registered");
         require(!students[_studentAddress].hasClaimed, "Student already claimed");
 
-        // Remove from mapping
-        delete students[_studentAddress];
+        uint256 indexToDelete = students[_studentAddress].listIndex;
+        address lastStudentAddr = studentList[studentList.length - 1];
 
-        // Remove from array (swap and pop)
-        for (uint256 i = 0; i < studentList.length; i++) {
-            if (studentList[i] == _studentAddress) {
-                studentList[i] = studentList[studentList.length - 1];
-                studentList.pop();
-                break;
-            }
+        // Move the last student to the slot of the student being deleted
+        if (indexToDelete != studentList.length - 1) {
+            studentList[indexToDelete] = lastStudentAddr;
+            students[lastStudentAddr].listIndex = indexToDelete;
         }
+
+        studentList.pop();
+        delete students[_studentAddress];
 
         emit StudentRemoved(_studentAddress);
     }
@@ -99,7 +99,7 @@ contract ScholarshipFund is Ownable, ReentrancyGuard, Pausable {
     /**
      * @dev Deposit funds into the contract.
      */
-    function depositFunds() external payable onlyOwner {
+    function depositFunds() external payable {
         require(msg.value > 0, "Deposit must be greater than 0");
         emit FundDeposited(msg.sender, msg.value);
     }
@@ -151,12 +151,21 @@ contract ScholarshipFund is Ownable, ReentrancyGuard, Pausable {
         return students[_studentAddress];
     }
 
-    function getAllStudents() external view returns (Student[] memory) {
-        Student[] memory allStudents = new Student[](studentList.length);
-        for (uint256 i = 0; i < studentList.length; i++) {
-            allStudents[i] = students[studentList[i]];
+    function getStudents(uint256 offset, uint256 limit) external view returns (Student[] memory) {
+        if (offset >= studentList.length) {
+            return new Student[](0);
         }
-        return allStudents;
+
+        uint256 end = offset + limit;
+        if (end > studentList.length) {
+            end = studentList.length;
+        }
+
+        Student[] memory result = new Student[](end - offset);
+        for (uint256 i = offset; i < end; i++) {
+            result[i - offset] = students[studentList[i]];
+        }
+        return result;
     }
 
     function getContractBalance() external view returns (uint256) {

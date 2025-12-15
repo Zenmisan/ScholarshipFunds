@@ -1,9 +1,8 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
-    "test": "hardhat test",
+    "test": "cross-env TS_NODE_PROJECT=\"tsconfig.hardhat.json\" hardhat test",
     "compile": "cross-env TS_NODE_PROJECT=\"tsconfig.hardhat.json\" hardhat compile",
     "node": "cross-env TS_NODE_PROJECT=\"tsconfig.hardhat.json\" hardhat node" ,
     "deploy": "hardhat run scripts/deploy.ts"

@@ -106,7 +106,8 @@ const AdminDashboard = ({ contract }) => {
         if (!contract) return;
         setLoading(true);
         try {
-            const _students = await contract.getAllStudents(); 
+            // Updated to use pagination (fetching first 100 for now)
+            const _students = await contract.getStudents(0, 100); 
             setStudents(_students);
             const _balance = await contract.getContractBalance();
             setBalance(ethers.formatEther(_balance));
@@ -298,7 +299,7 @@ const AdminDashboard = ({ contract }) => {
                             <table className="min-w-full text-left">
                                 <thead className="bg-gray-50 border-b border-gray-100">
                                     <tr>
-                                        <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
+                                        {/* Name column removed as it is not stored on-chain anymore */}
                                         <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Wallet Address</th>
                                         <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Amount</th>
                                         <th className="p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
@@ -307,14 +308,13 @@ const AdminDashboard = ({ contract }) => {
                                 <tbody className="divide-y divide-gray-100">
                                     {students.length === 0 ? (
                                         <tr>
-                                            <td colSpan="4" className="p-10 text-center text-gray-500 bg-white">
+                                            <td colSpan="3" className="p-10 text-center text-gray-500 bg-white">
                                                 No students registered yet.
                                             </td>
                                         </tr>
                                     ) : (
                                         students.map((s, i) => (
                                         <tr key={i} className="group hover:bg-gray-50 transition-colors">
-                                            <td className="p-4 font-medium text-gray-900">{s.name}</td>
                                             <td className="p-4 text-gray-500 font-mono text-xs">
                                                 {s.walletAddress.slice(0,6)}...{s.walletAddress.slice(-4)}
                                             </td>

@@ -23,9 +23,11 @@ describe("ScholarshipFund", function () {
 
   describe("Admin Functions", function () {
     it("Should allow owner to add a student", async function () {
-      await scholarshipFund.addStudent("Alice", student1.address, ethers.parseEther("1"));
+      await expect(scholarshipFund.addStudent("Alice", student1.address, ethers.parseEther("1")))
+        .to.emit(scholarshipFund, "StudentAdded")
+        .withArgs(student1.address, "Alice", ethers.parseEther("1"));
+        
       const student = await scholarshipFund.students(student1.address);
-      expect(student.name).to.equal("Alice");
       expect(student.amount).to.equal(ethers.parseEther("1"));
       expect(student.isRegistered).to.be.true;
     });
@@ -40,8 +42,7 @@ describe("ScholarshipFund", function () {
       const s1 = await scholarshipFund.students(student1.address);
       const s2 = await scholarshipFund.students(student2.address);
       
-      expect(s1.name).to.equal("Alice");
-      expect(s2.name).to.equal("Bob");
+      expect(s1.amount).to.equal(ethers.parseEther("1"));
       expect(s2.amount).to.equal(ethers.parseEther("0.5"));
     });
 
@@ -51,9 +52,38 @@ describe("ScholarshipFund", function () {
       ).to.be.revertedWithCustomError(scholarshipFund, "OwnableUnauthorizedAccount");
     });
 
-    it("Should deposit funds", async function () {
-      await scholarshipFund.depositFunds({ value: ethers.parseEther("10") });
+    it("Should deposit funds (anyone can deposit)", async function () {
+      // Owner deposits
+      await scholarshipFund.depositFunds({ value: ethers.parseEther("5") });
+      // Student deposits (non-owner)
+      await scholarshipFund.connect(student1).depositFunds({ value: ethers.parseEther("5") });
+      
       expect(await ethers.provider.getBalance(await scholarshipFund.getAddress())).to.equal(ethers.parseEther("10"));
+    });
+  });
+
+  describe("View Functions", function () {
+    it("Should return paginated students", async function () {
+        await scholarshipFund.addStudent("Alice", student1.address, ethers.parseEther("1"));
+        await scholarshipFund.addStudent("Bob", student2.address, ethers.parseEther("1"));
+
+        const students = await scholarshipFund.getStudents(0, 10);
+        expect(students.length).to.equal(2);
+        expect(students[0].walletAddress).to.equal(student1.address);
+        expect(students[1].walletAddress).to.equal(student2.address);
+    });
+
+    it("Should handle pagination limits", async function () {
+        await scholarshipFund.addStudent("Alice", student1.address, ethers.parseEther("1"));
+        await scholarshipFund.addStudent("Bob", student2.address, ethers.parseEther("1"));
+
+        const page1 = await scholarshipFund.getStudents(0, 1);
+        expect(page1.length).to.equal(1);
+        expect(page1[0].walletAddress).to.equal(student1.address);
+
+        const page2 = await scholarshipFund.getStudents(1, 1);
+        expect(page2.length).to.equal(1);
+        expect(page2[0].walletAddress).to.equal(student2.address);
     });
   });
 
